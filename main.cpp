@@ -215,7 +215,11 @@ void xpad_task(void const *) {
 /*******************Main*******************/
 
 int main() {
-
+#ifdef serial_debug
+    std::printf("Robot 5 : Start. \r\n", g_buttons,
+                g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,
+                g_trigger_r);
+#endif
   Thread xpadTask(xpad_task, NULL, osPriorityNormal, 1024 * 4);
 
   dir_M1 = 1;
@@ -228,11 +232,6 @@ int main() {
   Lpwm_M2.period_us(10);
 
   while (1) {
-#ifdef serial_debug
-    std::printf("Xpad: %d %-5d %-5d %-5d %-5d %02x %02x\r\b", g_buttons,
-                g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,
-                g_trigger_r);
-#endif
     //Tank Drive use the two analog sticks , each one drive one belt.
     if (Ly_value_negative == 0)  //forward
     {
@@ -266,5 +265,11 @@ int main() {
     if (RB_Value == 1) {
 
     }
+
+#ifdef serial_debug
+    std::printf("Xpad: %d %-5d %-5d %-5d %-5d %02x %02x\r\b", g_buttons,
+                g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,
+                g_trigger_r);
+#endif
   }
 }
