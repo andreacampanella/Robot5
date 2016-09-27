@@ -1,7 +1,10 @@
 #include "mbed.h"
 #include "USBHostXpad.h"
-#include "Servo.h"
-#include "ShiftOut/ShiftOut.h"
+
+#define PLL0CFG_Val 0x00050077 // MSEL = 119, NSEL = 5 for 120MHz
+
+
+//Remember to leave a valid bin file in the mbed disk
 
 #define serial_debug
 
@@ -58,6 +61,9 @@ DigitalOut enable_M2(p27);
 DigitalOut dir_M2(p28);
 PwmOut Rpwm_M2(p25);
 PwmOut Lpwm_M2(p26);
+
+Serial pc(USBTX, USBRX); // tx, rx
+
 
 
 /*******************Functions*******************/
@@ -183,43 +189,37 @@ void xpad_task(void const *) {
   USBHostXpad xpad;
 
   while (1) {
-    // try to connect a Xbox 360 Wireless Controller
-    while (!xpad.connect())
-      Thread::wait(500);
-    led_1 = 1;
 
-    // when connected, attach handler called on xpad event
-    xpad.attachEvent(onXpadEvent);
+	if(!xpad.connected()){
+		std::printf("Robot 5 : Pad not connected,connecting...\r\n");
+		xpad.connect();
+		Thread::wait(1000);
+		poll++;
+		if (poll > 2) {
+			std::printf("Robot 5 : Pad not connected,restarting...\r\n");
+			xpad.restart();
+			poll = 0;
+		}
+	}
+	else{
+		xpad.led(USBHostXpad::LED1_ON);
+		xpad.attachEvent(onXpadEvent);
 
-    xpad.led(USBHostXpad::LED_ROTATE);
-    Thread::wait(500);
-    xpad.rumble(0xff, 0);
-    Thread::wait(500);
-    xpad.rumble(0, 0xff);
-    Thread::wait(500);
-    xpad.rumble(0, 0);
-    Thread::wait(500);
-    xpad.led(USBHostXpad::LED1_ON);
+	}
 
-    while (xpad.connected()) {
-      Thread::wait(500);
-      poll++;
-      if (poll > 2) {
-        xpad.restart();
-        poll = 0;
-      }
-    }
+
   }
 }
 
 /*******************Main*******************/
 
 int main() {
+	pc.baud(115200);
+	led_4 = 1 ;
 #ifdef serial_debug
-    std::printf("Robot 5 : Start. \r\n", g_buttons,
-                g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,
-                g_trigger_r);
+	pc.printf("Robot 5 : Start. \r\n");
 #endif
+
   Thread xpadTask(xpad_task, NULL, osPriorityNormal, 1024 * 4);
 
   dir_M1 = 1;
@@ -267,9 +267,7 @@ int main() {
     }
 
 #ifdef serial_debug
-    std::printf("Xpad: %d %-5d %-5d %-5d %-5d %02x %02x\r\b", g_buttons,
-                g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,
-                g_trigger_r);
+    pc.printf("Xpad: %d %-5d %-5d %-5d %-5d %02x %02x\r\b", g_buttons,g_stick_lx, g_stick_ly, g_stick_rx, g_stick_ry, g_trigger_l,g_trigger_r);
 #endif
   }
 }

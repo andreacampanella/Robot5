@@ -99,9 +99,7 @@ main.o main.d: ../main.cpp \
  /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/dbg.h \
  /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHostHub/USBHostHub.h \
  /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/USBHostTypes.h \
- /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/IUSBEnumerator.h \
- /home/andrea/workspace.private/CMSIS/Robot5/Servo/Servo.h \
- ../ShiftOut/ShiftOut.h
+ /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/IUSBEnumerator.h
 
 /home/andrea/workspace.private/CMSIS/Robot5/mbed/mbed.h:
 
@@ -304,7 +302,3 @@ main.o main.d: ../main.cpp \
 /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/USBHostTypes.h:
 
 /home/andrea/workspace.private/CMSIS/Robot5/USBHost/USBHost/IUSBEnumerator.h:
-
-/home/andrea/workspace.private/CMSIS/Robot5/Servo/Servo.h:
-
-../ShiftOut/ShiftOut.h:
